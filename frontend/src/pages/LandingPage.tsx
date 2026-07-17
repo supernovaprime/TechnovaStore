@@ -260,7 +260,7 @@ export default function LandingPage() {
                   { value: '4.9', label: 'Average Rating', delay: 'delay-200' },
                   { value: '500+', label: 'Products', delay: 'delay-300' },
                   { value: '24/7', label: 'Support', delay: 'delay-400' }
-                ].map((stat, idx) => (
+                ].map((stat, _idx) => (
                   <div key={stat.label} className={`bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/20 hover:scale-105 transition-all duration-300 ${stat.delay}`}>
                     <p className="text-3xl font-bold text-secondary mb-1">{stat.value}</p>
                     <p className="text-sm text-primary-100 uppercase tracking-wide">

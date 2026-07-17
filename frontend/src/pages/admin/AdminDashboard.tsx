@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Bell, HelpCircle, ChevronDown, Search, Gauge, Boxes, Users, ShoppingCart, BarChart3, Settings, ArrowRight, Wallet, UserPlus, Pencil, Shield, Ban, AlertTriangle, CheckCircle, PanelLeftClose, PanelLeft } from 'lucide-react'
+import { Bell, HelpCircle, Search, Gauge, Boxes, Users, ShoppingCart, BarChart3, Settings, ArrowRight, Wallet, UserPlus, Pencil, Shield, CheckCircle, PanelLeftClose, PanelLeft } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
