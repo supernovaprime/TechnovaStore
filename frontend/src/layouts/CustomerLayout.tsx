@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { Smartphone, ShoppingCart, Package, Heart, User, Gauge, PanelLeftClose, PanelLeft, LogOut, Bell, HelpCircle } from 'lucide-react'
+import { Smartphone, ShoppingCart, Package, Heart, User, Gauge, PanelLeftClose, PanelLeft, LogOut } from 'lucide-react'
 import Footer from '../pages/Footer'
 import ConfirmModal from '../components/ConfirmModal'
 import { useAuth } from '../contexts/AuthContext'
@@ -121,26 +121,7 @@ export default function CustomerLayout() {
         />
       </aside>
 
-      <header className={`fixed top-4 right-4 bg-white/80 backdrop-blur-xl border border-outlineVariant/60 rounded-2xl z-40 h-14 flex items-center px-4 justify-between transition-all duration-300 shadow-lg shadow-black/5 ${sidebarOpen ? 'left-72' : 'left-24'} hidden md:flex`}>
-        <div className="flex-1" />
-        <div className="flex items-center gap-1.5">
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-background transition-all duration-200 relative group">
-            <Bell className="w-4 h-4 text-text-muted group-hover:text-secondary transition-colors duration-200" />
-            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-error rounded-full border-2 border-white" />
-          </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-background transition-all duration-200 group">
-            <HelpCircle className="w-4 h-4 text-text-muted group-hover:text-secondary transition-colors duration-200" />
-          </button>
-          <div className="h-6 w-px bg-outlineVariant/60 mx-1" />
-          <button className="w-9 h-9 rounded-full overflow-hidden hover:ring-2 hover:ring-secondary/30 transition-all duration-200">
-              <div className="w-full h-full bg-gradient-to-br from-secondary to-secondary-600 flex items-center justify-center text-white font-bold text-xs">
-              {(user?.name?.[0] || 'U').toUpperCase()}
-            </div>
-          </button>
-        </div>
-      </header>
-
-      <main className={`flex-1 pt-20 transition-all duration-300 md:ml-64`}>
+      <main className={`flex-1 pt-20 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
         <div className="min-h-[calc(100vh-8rem)] px-4 md:px-6 pb-6">
           <Outlet />
         </div>

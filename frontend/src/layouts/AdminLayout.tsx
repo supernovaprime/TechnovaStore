@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { Bell, HelpCircle, Boxes, Users, ShoppingCart, BarChart3, Settings, PanelLeftClose, PanelLeft, LogOut, Shield, UserCog } from 'lucide-react'
+import { Boxes, Users, ShoppingCart, BarChart3, Settings, PanelLeftClose, PanelLeft, LogOut, Shield, UserCog, User } from 'lucide-react'
 import Footer from '../pages/Footer'
-import CommandPalette from '../components/CommandPalette'
 import ConfirmModal from '../components/ConfirmModal'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -12,12 +11,13 @@ const allNavItems = [
   { icon: Users, label: 'Users', path: '/admin/users' },
   { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
   { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
+  { icon: User, label: 'Profile', path: '/admin/profile' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
 ]
 
 const roleNavMap: Record<string, string[]> = {
-  admin: ['Dashboard', 'Inventory', 'Users', 'Orders', 'Analytics', 'Settings'],
-  manager: ['Dashboard', 'Inventory', 'Orders', 'Analytics'],
+  admin: ['Dashboard', 'Inventory', 'Users', 'Orders', 'Analytics', 'Profile', 'Settings'],
+  manager: ['Dashboard', 'Inventory', 'Orders', 'Analytics', 'Profile'],
 }
 
 const roleGradients: Record<string, { sidebar: string; active: string; avatar: string }> = {
@@ -149,26 +149,6 @@ export default function AdminLayout() {
           onCancel={() => setLogoutOpen(false)}
         />
       </aside>
-
-      {/* TopNavBar */}
-      <header className={`fixed top-4 right-4 bg-white/80 backdrop-blur-xl border border-outlineVariant/60 rounded-2xl z-40 h-14 flex items-center px-4 justify-between transition-all duration-300 shadow-lg shadow-black/5 ${sidebarOpen ? 'left-72' : 'left-24'}`}>
-        <CommandPalette />
-        <div className="flex items-center gap-1.5">
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-background transition-all duration-200 relative group">
-            <Bell className="w-4 h-4 text-text-muted group-hover:text-primary transition-colors duration-200" />
-            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-error rounded-full border-2 border-white" />
-          </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-background transition-all duration-200 group">
-            <HelpCircle className="w-4 h-4 text-text-muted group-hover:text-primary transition-colors duration-200" />
-          </button>
-          <div className="h-6 w-px bg-outlineVariant/60 mx-1" />
-          <button className="w-9 h-9 rounded-full overflow-hidden hover:ring-2 hover:ring-primary/30 transition-all duration-200">
-            <div className={`w-full h-full bg-gradient-to-br ${grad.avatar} flex items-center justify-center text-white font-bold text-xs`}>
-              {(user?.name?.[0] || 'A').toUpperCase()}
-            </div>
-          </button>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main className={`flex-1 pt-20 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>

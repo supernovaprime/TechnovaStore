@@ -30,7 +30,7 @@ const orderItemSchema = new Schema(
     },
     image: {
       type: String,
-      required: true
+      default: ''
     },
     specifications: {
       color: { type: String },

@@ -50,7 +50,7 @@ export class OrderService {
           slug: product.slug,
           price: cartItem.price,
           quantity: cartItem.quantity,
-          image: product.images.find((img: any) => img.isPrimary)?.url || product.images[0]?.url || ''
+          image: product.images?.find((img: any) => img.isPrimary)?.url || product.images?.[0]?.url || '/placeholder.png'
         });
 
         product.stockQuantity -= cartItem.quantity;
@@ -239,6 +239,11 @@ export class OrderService {
       }
 
       order.status = status as any;
+      if (status === 'delivered') {
+        order.paymentStatus = 'completed';
+      } else if (status === 'cancelled') {
+        order.paymentStatus = order.paymentStatus === 'pending' ? 'failed' : 'refunded';
+      }
       order.statusHistory.push({
         status,
         timestamp: new Date(),

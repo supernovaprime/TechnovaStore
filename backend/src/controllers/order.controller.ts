@@ -6,10 +6,10 @@ import { ApiResponse } from '../utils/apiResponse';
 const orderController = {
   getOrders: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const isAdmin = req.user?.role === 'admin';
+      const canViewAll = ['admin', 'manager'].includes(req.user?.role || '');
       const { orders, total, page, limit } = await OrderService.getOrders(
-        isAdmin ? undefined : req.user!._id,
-        isAdmin,
+        canViewAll ? undefined : req.user!._id,
+        canViewAll,
         req.query
       );
       ApiResponse.paginated(res, orders, { page: Number(page), limit: Number(limit), total }, 'Orders fetched successfully');
@@ -20,8 +20,8 @@ const orderController = {
 
   getOrderById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const isAdmin = req.user?.role === 'admin';
-      const order = await OrderService.getOrderById(req.params.id, req.user!._id, isAdmin);
+      const canViewAll = ['admin', 'manager'].includes(req.user?.role || '');
+      const order = await OrderService.getOrderById(req.params.id, req.user!._id, canViewAll);
       ApiResponse.success(res, order, 'Order fetched successfully');
     } catch (error) {
       next(error);
@@ -49,8 +49,8 @@ const orderController = {
 
   cancelOrder: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const isAdmin = req.user?.role === 'admin';
-      const order = await OrderService.cancelOrder(req.params.id, req.user!._id, isAdmin);
+      const canViewAll = ['admin', 'manager'].includes(req.user?.role || '');
+      const order = await OrderService.cancelOrder(req.params.id, req.user!._id, canViewAll);
       ApiResponse.success(res, order, 'Order cancelled successfully');
     } catch (error) {
       next(error);

@@ -52,8 +52,7 @@ export default function Footer() {
 
   return (
     <footer className="p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className={`bg-gradient-to-b ${footerGrad} backdrop-blur-xl rounded-2xl border border-outlineVariant/40 shadow-sm overflow-hidden`}>
+      <div className={`bg-gradient-to-b ${footerGrad} backdrop-blur-xl rounded-2xl border border-outlineVariant/40 shadow-sm overflow-hidden`}>
           <div className="px-6 py-4 border-b border-outlineVariant/30">
             <div className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-white" />
@@ -117,7 +116,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
     </footer>
   )
 }

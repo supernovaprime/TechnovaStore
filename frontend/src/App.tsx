@@ -8,10 +8,13 @@ import AdminLayout from './layouts/AdminLayout'
 import CustomerLayout from './layouts/CustomerLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import ManagerDashboard from './pages/manager/ManagerDashboard'
+import ManagerProfilePage from './pages/manager/ManagerProfilePage'
 import CustomerDashboard from './pages/customer/CustomerDashboard'
 import ProductsPage from './pages/customer/ProductsPage'
 import CartPage from './pages/customer/CartPage'
 import CustomerOrdersPage from './pages/customer/CustomerOrdersPage'
+import WishlistPage from './pages/customer/WishlistPage'
+import CustomerProfilePage from './pages/customer/CustomerProfilePage'
 import InventoryPage from './pages/admin/InventoryPage'
 import UsersPage from './pages/admin/UsersPage'
 import OrdersPage from './pages/admin/OrdersPage'
@@ -48,6 +51,7 @@ function App() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="profile" element={<ManagerProfilePage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>
         <Route
@@ -62,8 +66,8 @@ function App() {
           <Route path="products" element={<ProductsPage />} />
           <Route path="orders" element={<CustomerOrdersPage />} />
           <Route path="cart" element={<CartPage />} />
-          <Route path="wishlist" element={<div className="text-center text-text-muted py-12 text-sm">Wishlist page coming soon</div>} />
-          <Route path="profile" element={<div className="text-center text-text-muted py-12 text-sm">Profile page coming soon</div>} />
+          <Route path="wishlist" element={<WishlistPage />} />
+          <Route path="profile" element={<CustomerProfilePage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

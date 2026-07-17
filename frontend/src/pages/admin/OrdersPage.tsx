@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Search, ShoppingCart, Package, ChevronDown, SlidersHorizontal, Clock, User, MapPin, AlertTriangle, Truck, XCircle, CheckCircle, RefreshCw, ThumbsUp } from 'lucide-react'
+import { Search, ShoppingCart, Package, ChevronDown, SlidersHorizontal, Clock, User, MapPin, AlertTriangle, Truck, XCircle, CheckCircle, RefreshCw, ThumbsUp, ArrowUpCircle, Ban } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '../../contexts/ToastContext'
@@ -40,13 +40,6 @@ const statusStyles: Record<string, string> = {
   refunded: 'bg-accent/10 text-accent border-accent/20'
 }
 
-const paymentStatusStyles: Record<string, string> = {
-  pending: 'text-warning',
-  completed: 'text-success',
-  failed: 'text-error',
-  refunded: 'text-accent'
-}
-
 const statusIconMap: Record<string, typeof Package> = {
   pending: Clock,
   processing: RefreshCw,
@@ -58,6 +51,13 @@ const statusIconMap: Record<string, typeof Package> = {
 }
 
 const orderStatuses = ['pending', 'processing', 'approved', 'shipped', 'delivered', 'cancelled', 'refunded']
+const workflowOrder = ['pending', 'processing', 'approved', 'shipped', 'delivered']
+
+const getNextStatus = (current: string): string | null => {
+  const idx = workflowOrder.indexOf(current)
+  if (idx === -1 || idx === workflowOrder.length - 1) return null
+  return workflowOrder[idx + 1]
+}
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
@@ -70,7 +70,7 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
-  const { token, logout } = useAuth()
+  const { token, user, logout } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -316,24 +316,57 @@ export default function OrdersPage() {
                       </div>
 
                       <div className="flex items-center gap-1.5">
-                        <div className="relative">
-                          <select
-                            value={order.status}
-                            onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
-                            disabled={updatingId === order._id}
-                            className="appearance-none pl-2.5 pr-7 py-1.5 text-[10px] font-bold rounded-lg border border-outlineVariant/60 bg-white outline-none cursor-pointer hover:border-primary/40 transition-colors disabled:opacity-50"
-                          >
-                            {orderStatuses.map(s => (
-                              <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
-                            ))}
-                          </select>
-                          <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-text-muted pointer-events-none" />
-                        </div>
-                      </div>
+                        {(() => {
+                          const next = getNextStatus(order.status)
+                          const isTerminal = ['delivered', 'cancelled', 'refunded'].includes(order.status)
+                          const isManagerBlocked = next === 'approved' && user?.role === 'manager'
 
-                      <span className={`text-[9px] font-bold tracking-wider uppercase ${paymentStatusStyles[order.paymentStatus] || 'text-text-muted'}`}>
-                        {order.paymentStatus}
-                      </span>
+                          if (isTerminal) {
+                            return (
+                              <span className="text-[10px] text-text-muted/50 italic px-2">Final</span>
+                            )
+                          }
+
+                          if (!next) return null
+
+                          return (
+                            <>
+                              <div className="relative group">
+                                <button
+                                  onClick={() => {
+                                    if (isManagerBlocked) return
+                                    handleStatusUpdate(order._id, next)
+                                  }}
+                                  disabled={updatingId === order._id || isManagerBlocked}
+                                  className={`flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-bold rounded-lg border transition-all duration-200 ${
+                                    isManagerBlocked
+                                      ? 'border-outlineVariant/30 text-text-muted/30 bg-white/50 blur-[1px] cursor-not-allowed'
+                                      : 'border-secondary/30 text-secondary bg-secondary/5 hover:bg-secondary/10 hover:border-secondary/60 active:scale-95 cursor-pointer'
+                                  }`}
+                                >
+                                  <ArrowUpCircle className="w-3 h-3" />
+                                  Promote to&nbsp;{next}
+                                </button>
+                                {isManagerBlocked && (
+                                  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg bg-gray-900 text-white text-[9px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg z-10">
+                                    Only admins can approve orders
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                                  </div>
+                                )}
+                              </div>
+
+                              <button
+                                onClick={() => handleStatusUpdate(order._id, 'cancelled')}
+                                disabled={updatingId === order._id}
+                                className="flex items-center gap-1 px-2 py-1.5 text-[10px] font-bold rounded-lg border border-error/20 text-error/60 bg-error/5 hover:bg-error/10 hover:border-error/40 hover:text-error transition-all duration-200 disabled:opacity-50"
+                              >
+                                <Ban className="w-3 h-3" />
+                                Reject
+                              </button>
+                            </>
+                          )
+                        })()}
+                      </div>
                     </div>
                   </div>
                 </div>
