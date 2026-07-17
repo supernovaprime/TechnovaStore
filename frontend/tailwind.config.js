@@ -85,6 +85,15 @@ export default {
         'label-caps': ['12px', { lineHeight: '16px', letterSpacing: '0.05em', fontWeight: '600' }],
         'data-mono': ['13px', { lineHeight: '18px', letterSpacing: '0', fontWeight: '500' }],
       },
+      keyframes: {
+        'slide-in': {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+      },
+      animation: {
+        'slide-in': 'slide-in 0.3s ease-out',
+      },
     },
   },
   plugins: [],

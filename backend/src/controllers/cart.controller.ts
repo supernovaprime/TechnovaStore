@@ -25,7 +25,7 @@ const cartController = {
 
   updateCartItem: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { productId } = req.params;
+      const { id: productId } = req.params;
       const { quantity } = req.body;
       const cart = await CartService.updateCartItem(req.user!._id, productId, quantity);
       ApiResponse.success(res, cart, 'Cart updated successfully');
@@ -36,7 +36,7 @@ const cartController = {
 
   removeFromCart: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { productId } = req.params;
+      const { id: productId } = req.params;
       const cart = await CartService.removeFromCart(req.user!._id, productId);
       ApiResponse.success(res, cart, 'Item removed from cart successfully');
     } catch (error) {

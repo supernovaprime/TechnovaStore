@@ -34,7 +34,7 @@ export const config = {
   jwt: {
     secret: process.env.JWT_SECRET || 'your-jwt-secret-key',
     refreshSecret: process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key',
-    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+    expiresIn: process.env.JWT_EXPIRES_IN || '24h',
     refreshExpiresIn: '7d'
   },
   cloudinary: {

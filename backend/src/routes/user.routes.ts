@@ -8,6 +8,7 @@ const router = Router();
 router.use(authenticate, adminOnly);
 
 router.get('/', userController.getAllUsers);
+router.get('/view/:id', validateId, userController.viewUser);
 router.get('/:id', validateId, userController.getUserById);
 router.put('/:id/role', validateId, ...userValidators.updateRole, validate, userController.updateUserRole);
 router.put('/:id/status', validateId, ...userValidators.updateStatus, validate, userController.updateUserStatus);

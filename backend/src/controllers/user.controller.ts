@@ -22,6 +22,15 @@ const userController = {
     }
   },
 
+  viewUser: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = await UserService.getUserWithPassword(req.params.id);
+      ApiResponse.success(res, user, 'User details fetched successfully');
+    } catch (error) {
+      next(error);
+    }
+  },
+
   updateUserRole: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { role } = req.body;

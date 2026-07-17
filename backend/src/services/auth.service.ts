@@ -88,7 +88,9 @@ export class AuthService {
           ip: req ? AuditService.extractIp(req) : undefined,
           userAgent: req ? AuditService.extractUserAgent(req) : undefined
         });
-        throw new Error('Invalid email or password');
+        const err = new Error('Invalid email or password');
+        (err as any).statusCode = 401;
+        throw err;
       }
 
       const isPasswordValid = await user.comparePassword(data.password);
@@ -104,7 +106,9 @@ export class AuthService {
           ip: req ? AuditService.extractIp(req) : undefined,
           userAgent: req ? AuditService.extractUserAgent(req) : undefined
         });
-        throw new Error('Invalid email or password');
+        const err = new Error('Invalid email or password');
+        (err as any).statusCode = 401;
+        throw err;
       }
 
       if (!user.isActive) {
@@ -119,7 +123,9 @@ export class AuthService {
           ip: req ? AuditService.extractIp(req) : undefined,
           userAgent: req ? AuditService.extractUserAgent(req) : undefined
         });
-        throw new Error('Account is deactivated');
+        const err = new Error('Account is deactivated');
+        (err as any).statusCode = 401;
+        throw err;
       }
 
       user.lastLogin = new Date();
@@ -309,10 +315,14 @@ export class AuthService {
         throw new Error('User not found');
       }
 
+      logger.debug(`Password change: user ${user.email}, password field exists: ${!!(user as any).password}, isModified on fetch: ${user.isModified('password')}`);
+
       const isCurrentPasswordValid = await user.comparePassword(currentPassword);
       if (!isCurrentPasswordValid) {
         logger.warn(`Password change with invalid current password for user: ${user.email}`);
-        throw new Error('Current password is incorrect');
+        const err = new Error('Current password is incorrect');
+        (err as any).statusCode = 400;
+        throw err;
       }
 
       user.password = newPassword;

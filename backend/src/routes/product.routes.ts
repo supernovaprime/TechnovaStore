@@ -12,7 +12,7 @@ router.get('/search', productController.searchProducts);
 router.get('/:id', validateId, productController.getProductById);
 router.get('/slug/:slug', productController.getProductBySlug);
 
-router.use(authenticate, authorizeRole(UserRole.ADMIN));
+router.use(authenticate, authorizeRole(UserRole.MANAGER, UserRole.ADMIN));
 
 router.post('/', ...productValidators.create, validate, productController.createProduct);
 router.put('/:id', validateId, ...productValidators.update, validate, productController.updateProduct);

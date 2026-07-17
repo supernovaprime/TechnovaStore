@@ -12,6 +12,7 @@ export class OrderService {
     billingAddress?: any;
     discountCode?: string;
     guestEmail?: string;
+    paymentDetails?: any;
   }) {
     try {
       const user = await User.findById(userId);
@@ -111,6 +112,7 @@ export class OrderService {
         shippingAddress: data.shippingAddress,
         billingAddress: data.billingAddress || data.shippingAddress,
         paymentMethod: data.paymentMethod,
+        paymentDetails: data.paymentDetails || {},
         subtotal,
         shippingCost,
         tax,
@@ -209,12 +211,31 @@ export class OrderService {
     }
   }
 
-  static async updateOrderStatus(id: string, status: string, note?: string) {
+  static async updateOrderStatus(id: string, status: string, note?: string, role?: string) {
     try {
       const order = await Order.findById(id);
       if (!order) {
         logger.warn(`Status update failed - order not found: ${id}`);
         throw new Error('Order not found');
+      }
+
+      const allowedTransitions: Record<string, string[]> = {
+        pending: ['processing', 'cancelled'],
+        processing: ['approved', 'cancelled'],
+        approved: ['shipped', 'cancelled'],
+        shipped: ['delivered', 'cancelled'],
+        delivered: [],
+        cancelled: [],
+        refunded: [],
+      };
+
+      const allowed = allowedTransitions[order.status] || [];
+      if (!allowed.includes(status)) {
+        throw new Error(`Cannot transition from "${order.status}" to "${status}"`);
+      }
+
+      if (status === 'approved' && role !== 'admin') {
+        throw new Error('Only admins can approve orders');
       }
 
       order.status = status as any;

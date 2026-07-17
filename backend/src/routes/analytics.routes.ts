@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import analyticsController from '../controllers/analytics.controller';
-import { authenticate, adminOnly } from '../middleware/auth.middleware';
+import { authenticate, managerOrAdmin } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.use(authenticate, adminOnly);
+router.use(authenticate, managerOrAdmin);
 
 router.get('/dashboard', analyticsController.getDashboardStats);
 router.get('/sales', analyticsController.getSalesAnalytics);

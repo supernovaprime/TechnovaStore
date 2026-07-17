@@ -36,11 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ email, password }),
     })
 
+    const data = await response.json()
     if (!response.ok) {
-      throw new Error('Login failed')
+      throw new Error(data.error || data.message || 'Login failed')
     }
 
-    const data = await response.json()
     setToken(data.data.token)
     setUser(data.data.user)
     localStorage.setItem('token', data.data.token)

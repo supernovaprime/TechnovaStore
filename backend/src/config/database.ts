@@ -12,6 +12,17 @@ const connectDatabase = async (): Promise<void> => {
 
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
 
+    // Drop stale indexes that aren't in the schema
+    try {
+      const db = conn.connection.db
+      if (db) {
+        await db.collection('products').dropIndex('productId_1');
+        logger.info('Dropped stale productId_1 index from products collection');
+      }
+    } catch {
+      // index doesn't exist — no action needed
+    }
+
     mongoose.connection.on('error', (err) => {
       logger.error(`MongoDB connection error: ${err}`);
     });

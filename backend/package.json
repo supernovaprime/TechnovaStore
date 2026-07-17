@@ -4,7 +4,7 @@
   "description": "TechNova Mobile Store Backend API",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "nodemon --watch src --ext ts --exec ts-node --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "jest --config jest.config.js",
@@ -12,8 +12,10 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "seed:admin": "ts-node --transpile-only src/scripts/seedAdmin.ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "prepare": "husky install"
+    "seed:categories": "ts-node --transpile-only src/scripts/seedCategories.ts",
+    "seed:brands": "ts-node --transpile-only src/scripts/seedBrands.ts",
+    "db:drop-username-index": "ts-node --transpile-only src/scripts/dropUsernameIndex.ts",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [
     "ecommerce",

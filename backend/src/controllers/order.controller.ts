@@ -40,7 +40,7 @@ const orderController = {
   updateOrderStatus: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { status, note } = req.body;
-      const order = await OrderService.updateOrderStatus(req.params.id, status, note);
+      const order = await OrderService.updateOrderStatus(req.params.id, status, note, req.user?.role);
       ApiResponse.success(res, order, 'Order status updated successfully');
     } catch (error) {
       next(error);
@@ -59,8 +59,8 @@ const orderController = {
 };
 
 export const orderValidators = {
-  create: [body('items').isArray({ min: 1 }).withMessage('At least one item is required'), body('shippingAddress').isObject().withMessage('Shipping address is required'), body('paymentMethod').isIn(['credit_card', 'debit_card', 'paypal', 'cash_on_delivery']).withMessage('Invalid payment method')],
-  updateStatus: [body('status').isIn(['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded']).withMessage('Invalid status')]
+  create: [body('items').isArray({ min: 1 }).withMessage('At least one item is required'), body('shippingAddress').isObject().withMessage('Shipping address is required'), body('paymentMethod').isIn(['credit_card', 'debit_card', 'paypal', 'cash_on_delivery', 'mobile_money']).withMessage('Invalid payment method')],
+  updateStatus: [body('status').isIn(['pending', 'processing', 'approved', 'shipped', 'delivered', 'cancelled', 'refunded']).withMessage('Invalid status')]
 };
 
 export default orderController;

@@ -172,6 +172,7 @@ export class AnalyticsService {
           }
         },
         { $unwind: '$user' },
+        { $match: { 'user.role': 'customer' } },
         {
           $project: {
             name: '$user.name',

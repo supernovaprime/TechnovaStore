@@ -57,6 +57,21 @@ export class UserService {
     }
   }
 
+  static async getUserWithPassword(id: string) {
+    try {
+      const user = await User.findById(id).select('+password').lean();
+      if (!user) {
+        logger.warn(`User not found: ${id}`);
+        throw new Error('User not found');
+      }
+      logger.debug(`User with password fetched: ${user.email}`);
+      return user;
+    } catch (error) {
+      logger.error(`Get user with password error: ${(error as Error).message}`);
+      throw error;
+    }
+  }
+
   static async updateUserRole(id: string, role: string) {
     try {
       const user = await User.findById(id);

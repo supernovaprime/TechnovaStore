@@ -41,6 +41,7 @@ export const HTTP_STATUS = {
 export const ORDER_STATUS = {
   PENDING: 'pending',
   PROCESSING: 'processing',
+  APPROVED: 'approved',
   SHIPPED: 'shipped',
   DELIVERED: 'delivered',
   CANCELLED: 'cancelled',
@@ -58,7 +59,8 @@ export const PAYMENT_METHODS = {
   CREDIT_CARD: 'credit_card',
   DEBIT_CARD: 'debit_card',
   PAYPAL: 'paypal',
-  CASH_ON_DELIVERY: 'cash_on_delivery'
+  CASH_ON_DELIVERY: 'cash_on_delivery',
+  MOBILE_MONEY: 'mobile_money'
 };
 
 export const MESSAGE_STATUS = {

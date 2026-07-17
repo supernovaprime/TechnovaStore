@@ -85,6 +85,10 @@ export const errorHandler = (
     return ApiResponse.error(res, 'Resource already exists', 409);
   }
 
+  if ((err as any).statusCode) {
+    return ApiResponse.error(res, err.message, (err as any).statusCode);
+  }
+
   return ApiResponse.error(
     res,
     process.env.NODE_ENV === 'development' ? err.message : 'Internal server error',

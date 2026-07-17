@@ -110,7 +110,7 @@ const orderSchema = new Schema<IOrderDocument>(
     },
     paymentMethod: {
       type: String,
-      enum: ['credit_card', 'debit_card', 'paypal', 'cash_on_delivery'],
+      enum: ['credit_card', 'debit_card', 'paypal', 'cash_on_delivery', 'mobile_money'],
       required: true
     },
     paymentStatus: {
@@ -159,7 +159,7 @@ const orderSchema = new Schema<IOrderDocument>(
     },
     status: {
       type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'],
+      enum: ['pending', 'processing', 'approved', 'shipped', 'delivered', 'cancelled', 'refunded'],
       default: 'pending'
     },
     statusHistory: {

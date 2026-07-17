@@ -5,10 +5,10 @@ import { logger } from '../utils/logger';
 export class CartService {
   static async getCart(userId: string) {
     try {
-      const cart = await Cart.findOne({ user: userId }).lean();
+      const cart = await Cart.findOne({ user: userId }).populate('items.product', 'name price images brand slug stockQuantity stockStatus').lean();
       if (!cart) {
         const newCart = await Cart.create({ user: userId, items: [] });
-        return newCart;
+        return newCart.toObject();
       }
       return cart;
     } catch (error) {
