@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import appleBg from '@/images/Apple.jpg'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 import { useAuth } from '@/contexts/AuthContext'
 
 type AuthMode = 'login' | 'register'
@@ -295,13 +297,7 @@ export default function LoginPage() {
                 type="button"
                 className="flex items-center justify-center gap-2 py-3 px-4 bg-white border border-outline-variant rounded-lg hover:border-primary/60 hover:bg-primary/5 transition-all duration-200 active:scale-95"
               >
-                <div
-                  className="w-5 h-5 bg-contain bg-no-repeat bg-center"
-                  style={{
-                    backgroundImage:
-                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCfdil475w21CegrO6qVJ78qtj3ETPqEdMOqUqh7aExD77c82bVU5wUs705NefoT0AJyu9TbgDAcgH5yLkun0B5R5TmCZQjG7AaHYbWX7do4fc-zJ1DLBMkwFvV6yedcLCnt2mFG5z4s0Y95rm37XIo8TYW72R7EdtdrWgotdJdX_7svwvqwvnyxjMBGWRcapRtXDnzvpGHDnMJJ3co4H6L_f2pVbYMT4ZV20hRWGiNUFpqEwnTPP1AzF5d45hgF6_DvQdVZvWUHYI')"
-                  }}
-                />
+                <FontAwesomeIcon icon={faGoogle} className="text-primary text-lg" />
                 <span className="font-label-md text-label-md text-on-surface">
                   Google
                 </span>
@@ -310,13 +306,7 @@ export default function LoginPage() {
                 type="button"
                 className="flex items-center justify-center gap-2 py-3 px-4 bg-white border border-outline-variant rounded-lg hover:border-secondary/60 hover:bg-secondary/5 transition-all duration-200 active:scale-95"
               >
-                <div
-                  className="w-5 h-5 bg-contain bg-no-repeat bg-center"
-                  style={{
-                    backgroundImage:
-                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuC6ddj7T72wxlPNSnW697XaP5_Ro2wBEo6jZv4dZAoVw67b2tNT5vCzhgguEyC7EVWsQ1UCWkf99Lph6dAD-XU7ysaT4n_I6iN8Weibc_9yILP3jGB71VWf48599zXvuG_DyU7NQ7VelOg31jsnvKM8O6eCT0UQ4H7GYuuAbSNTscGzQzC39cMErWif2kY6LZYQq2cEUc3gky7CLusr-byTVTncqhKc_r-Kvx1Y61AwekVgMARv8Khy6ZhDhlC7692SyrQCoX2sGbE')"
-                  }}
-                />
+                <FontAwesomeIcon icon={faMicrosoft} className="text-secondary text-lg" />
                 <span className="font-label-md text-label-md text-on-surface">
                   Microsoft
                 </span>
