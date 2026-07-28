@@ -5,7 +5,8 @@ RUN npm install --omit=dev && npm cache clean --force
 
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm install && npm cache clean --force
 COPY . .
 RUN npm run build
 
