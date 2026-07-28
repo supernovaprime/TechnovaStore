@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import appleBg from '@/images/Apple.jpg'
 import { Mail, Lock, User, Eye, EyeOff, Phone, ChevronRight, Star, Heart, ShieldCheck, Truck, Sparkles, MessageSquare, ArrowLeft } from 'lucide-react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 
@@ -274,27 +272,7 @@ export default function LoginPage() {
                   </button>
                 </form>
 
-                {/* SSO Divider */}
-                <div className="relative my-5 text-center">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-outlineVariant/50" />
-                  </div>
-                  <span className="relative px-3 bg-white text-[10px] text-text-muted uppercase tracking-widest font-bold">Alternative Methods</span>
-                </div>
 
-                {/* SSO Buttons */}
-                <div className="grid grid-cols-2 gap-3">
-                  <button type="button"
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-outlineVariant/80 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 active:scale-95 text-xs font-semibold text-text">
-                    <FontAwesomeIcon icon={faGoogle} className="text-base text-rose-500" />
-                    Google
-                  </button>
-                  <button type="button"
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-outlineVariant/80 rounded-xl hover:border-secondary/40 hover:bg-secondary/5 transition-all duration-200 active:scale-95 text-xs font-semibold text-text">
-                    <FontAwesomeIcon icon={faMicrosoft} className="text-base text-blue-500" />
-                    Microsoft
-                  </button>
-                </div>
               </div>
 
               {/* Disclaimer */}

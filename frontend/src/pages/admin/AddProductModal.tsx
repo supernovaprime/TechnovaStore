@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
-import { X, Package, Loader2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { X, Package, Loader2, Upload, Trash2, Image as ImageIcon } from 'lucide-react'
 import { useToast } from '../../contexts/ToastContext'
+import { useAuth } from '../../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 interface Brand {
   _id: string
@@ -20,6 +22,7 @@ interface ProductData {
   stockQuantity: number
   brand: { _id: string; name: string } | null
   category: { _id: string; name: string } | null
+  images?: { url: string; alt: string; isPrimary: boolean }[]
 }
 
 interface AddProductModalProps {
@@ -31,6 +34,8 @@ interface AddProductModalProps {
 
 export default function AddProductModal({ open, onClose, onSuccess, product }: AddProductModalProps) {
   const { toast } = useToast()
+  const { logout } = useAuth()
+  const navigate = useNavigate()
   const isEdit = !!product
 
   const [name, setName] = useState('')
@@ -43,6 +48,53 @@ export default function AddProductModal({ open, onClose, onSuccess, product }: A
   const [categories, setCategories] = useState<Category[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [imageUploading, setImageUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleAuthError = (res: Response) => {
+    if (res.status === 401) {
+      logout()
+      navigate('/login')
+      return true
+    }
+    return false
+  }
+
+  const uploadImage = async (file: File) => {
+    setImageUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const token = localStorage.getItem('token')
+      const res = await fetch('/api/v1/upload/image', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      })
+      if (!res.ok) {
+        if (handleAuthError(res)) return
+        const errData = await res.json()
+        throw new Error(errData.error || errData.message || 'Upload failed')
+      }
+      const data = await res.json()
+      setImageUrl(data.data.url)
+    } catch (err) {
+      if (err instanceof TypeError && err.message === 'Failed to fetch') {
+        toast('error', 'Network error — check your connection')
+        return
+      }
+      const message = err instanceof Error ? err.message : 'Image upload failed'
+      toast('error', message)
+      setError(message)
+      setImageFile(null)
+      setImagePreview('')
+    } finally {
+      setImageUploading(false)
+    }
+  }
 
   useEffect(() => {
     if (!open) return
@@ -73,10 +125,15 @@ export default function AddProductModal({ open, onClose, onSuccess, product }: A
       setStockQuantity(product.stockQuantity.toString())
       setBrandId(product.brand?._id || '')
       setCategoryId(product.category?._id || '')
+      const primaryImage = product.images?.find(img => img.isPrimary) || product.images?.[0]
+      if (primaryImage) {
+        setImageUrl(primaryImage.url)
+        setImagePreview(primaryImage.url)
+      }
     } else {
       reset()
     }
-  }, [product])
+  }, [product, open])
 
   const reset = () => {
     setName('')
@@ -86,6 +143,9 @@ export default function AddProductModal({ open, onClose, onSuccess, product }: A
     setBrandId('')
     setCategoryId('')
     setError('')
+    setImageFile(null)
+    setImagePreview('')
+    setImageUrl('')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,13 +158,15 @@ export default function AddProductModal({ open, onClose, onSuccess, product }: A
     setSubmitting(true)
     try {
       const token = localStorage.getItem('token')
+      const images = imageUrl ? [{ url: imageUrl, alt: name, isPrimary: true }] : []
       const body = JSON.stringify({
         name,
         description,
         price: parseFloat(price),
         stockQuantity: parseInt(stockQuantity) || 0,
         brand: brandId,
-        category: categoryId
+        category: categoryId,
+        images
       })
 
       const url = isEdit ? `/api/v1/products/${product!._id}` : '/api/v1/products'
@@ -118,6 +180,7 @@ export default function AddProductModal({ open, onClose, onSuccess, product }: A
       })
 
       if (!response.ok) {
+        if (handleAuthError(response)) return
         const data = await response.json()
         throw new Error(data.error || data.message || `Failed to ${isEdit ? 'update' : 'create'} product`)
       }
@@ -240,6 +303,65 @@ export default function AddProductModal({ open, onClose, onSuccess, product }: A
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-text">Product Image</label>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className={`relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all hover:border-primary/50 ${
+                imagePreview ? 'border-primary/30 bg-primary/[0.02]' : 'border-outlineVariant/60 bg-background'
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    setImageFile(file)
+                    setImagePreview(URL.createObjectURL(file))
+                    uploadImage(file)
+                  }
+                }}
+              />
+              {imageUploading ? (
+                <div className="flex flex-col items-center gap-2 py-2">
+                  <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                  <span className="text-xs text-text-muted">Uploading image...</span>
+                </div>
+              ) : imagePreview ? (
+                <div className="relative inline-block">
+                  <img src={imagePreview} alt="Preview" className="h-28 rounded-lg object-cover mx-auto shadow-sm" />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setImageFile(null)
+                      setImagePreview('')
+                      setImageUrl('')
+                      if (fileInputRef.current) fileInputRef.current.value = ''
+                    }}
+                    className="absolute -top-2 -right-2 p-1 bg-error text-white rounded-full shadow hover:bg-error/80 transition-all"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 py-2">
+                  <Upload className="w-8 h-8 text-text-muted/40" />
+                  <span className="text-xs text-text-muted">Click to upload product image</span>
+                  <span className="text-[9px] text-text-muted/50">JPEG, PNG, WebP (max 5MB)</span>
+                </div>
+              )}
+            </div>
+            {imageUrl && !imageUploading && (
+              <p className="text-[10px] text-success font-medium flex items-center gap-1">
+                <ImageIcon className="w-3 h-3" /> Image uploaded successfully
+              </p>
+            )}
           </div>
 
           {error && (

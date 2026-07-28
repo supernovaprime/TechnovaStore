@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Search, Plus, Package, Edit3, Trash2, ChevronDown, SlidersHorizontal, AlertTriangle, Clock, ShoppingBag, Heart, CheckCircle, XCircle } from 'lucide-react'
+import { Search, Plus, Package, Info, Trash2, ChevronDown, SlidersHorizontal, AlertTriangle, Heart, CheckCircle, XCircle, Star, List } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '../../contexts/ToastContext'
@@ -31,7 +31,9 @@ export default function InventoryPage() {
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
   const [stockFilter, setStockFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
   const [showAddProduct, setShowAddProduct] = useState(false)
@@ -63,7 +65,7 @@ export default function InventoryPage() {
   const fetchProducts = async (searchTerm?: string) => {
     try {
       setLoading(true)
-      const params = new URLSearchParams({ page: page.toString(), limit: '10' })
+      const params = new URLSearchParams({ page: page.toString(), limit: pageSize.toString() })
       const term = searchTerm ?? search
       if (term) params.append('search', term)
       if (stockFilter) params.append('stockStatus', stockFilter)
@@ -81,8 +83,9 @@ export default function InventoryPage() {
       if (!response.ok) throw new Error('Failed to fetch products')
 
       const data = await response.json()
-      setProducts(data.data?.products || data.data || [])
-      setTotalPages(data.data?.totalPages || data.totalPages || 1)
+      setProducts(data.data || [])
+      setTotalPages(data.pagination?.pages || 1)
+      setTotalItems(data.pagination?.total || 0)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load products')
     } finally {
@@ -93,7 +96,7 @@ export default function InventoryPage() {
   useEffect(() => {
     if (token) fetchProducts()
     else setLoading(false)
-  }, [token, page, stockFilter])
+  }, [token, page, pageSize, stockFilter])
 
   useEffect(() => {
     setPage(1)
@@ -288,105 +291,89 @@ export default function InventoryPage() {
             <p className="text-sm text-text-muted/70 mt-1">Try adjusting your search or filters</p>
           </div>
         ) : (
-          <div className="p-5 space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 p-5">
             {products.map((product) => {
               const isLowStock = product.stockQuantity < 10 && product.stockQuantity > 0
               const isOutOfStock = product.stockQuantity === 0
-              const isDanger = isLowStock || isOutOfStock
               const isLiked = likedProducts.includes(product._id)
               const primaryImage = product.images?.find(img => img.isPrimary) || product.images?.[0]
 
               return (
                 <div
                   key={product._id}
-                  className={`relative overflow-hidden rounded-xl border transition-all duration-200 group ${
-                    isLiked ? 'ring-1 ring-error/30 border-error/20' : ''
-                  } ${
-                    isDanger
-                      ? 'bg-gradient-to-r from-error/5 via-white to-error/[0.02] border-error/15'
-                      : 'bg-gradient-to-r from-success/5 via-white to-success/[0.02] border-success/15'
+                  className={`bg-white/70 backdrop-blur-xl rounded-2xl border shadow-sm overflow-hidden group hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ${
+                    isLiked ? 'ring-2 ring-error/20 border-error/20' : 'border-outlineVariant/40'
                   }`}
                 >
-                  <div className={`absolute inset-0 opacity-[0.03] ${
-                    isDanger
-                      ? 'bg-gradient-to-br from-error via-transparent to-transparent'
-                      : 'bg-gradient-to-br from-success via-transparent to-transparent'
-                  }`} />
-                  <div className="relative flex items-center justify-between p-3">
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <button
-                        onClick={() => toggleLike(product._id, product.name)}
-                        className="p-1 rounded-lg hover:bg-background transition-colors flex-shrink-0"
-                      >
-                        <Heart className={`w-4 h-4 transition-all ${isLiked ? 'fill-error text-error scale-110' : 'text-text-muted/40 hover:text-error'}`} />
-                      </button>
-
-                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-background flex-shrink-0 border border-outlineVariant/40 flex items-center justify-center">
-                        {primaryImage?.url ? (
-                          <img src={primaryImage.url} alt={primaryImage.alt || product.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center text-primary font-bold text-sm">
-                            {product.name[0]?.toUpperCase()}
-                          </div>
-                        )}
+                  <div className="relative h-48 bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center overflow-hidden">
+                    {primaryImage?.url ? (
+                      <img src={primaryImage.url} alt={primaryImage.alt || product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <Package className="w-12 h-12 text-text-muted/30" />
+                    )}
+                    <button
+                      onClick={() => toggleLike(product._id, product.name)}
+                      className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm border border-outlineVariant/30 hover:scale-110 transition-all"
+                    >
+                      <Heart className={`w-4 h-4 ${isLiked ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
+                    </button>
+                    {isOutOfStock && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <span className="bg-error text-white text-[10px] font-bold px-3 py-1 rounded-full">Out of Stock</span>
                       </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-text truncate">{product.name}</p>
-                          {isDanger && (
-                            <AlertTriangle className="w-3.5 h-3.5 text-error flex-shrink-0" />
-                          )}
-                          {isLiked && (
-                            <span className="text-[9px] bg-error/10 text-error px-1.5 py-0.5 rounded border border-error/20 font-bold">
-                              Watchlisted
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] text-text-muted truncate flex items-center gap-1 font-semibold">
-                            <ShoppingBag className="w-3 h-3" />
-                            {product.brand?.name || 'Generic'}
-                          </span>
-                          <span className="text-[10px] text-text-muted/40">|</span>
-                          <span className="text-[10px] text-text-muted truncate">{product.category?.name || 'Uncategorized'}</span>
-                        </div>
+                    )}
+                    {isLowStock && (
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-warning text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3" /> {product.stockQuantity} left
+                        </span>
                       </div>
+                    )}
+                  </div>
+
+                  <div className="p-4 space-y-3">
+                    <div className="space-y-1">
+                      {product.brand && (
+                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">{product.brand.name}</p>
+                      )}
+                      <h3 className="text-sm font-bold text-text leading-tight line-clamp-2">{product.name}</h3>
+                      {product.category && (
+                        <p className="text-[10px] text-text-muted">{product.category.name}</p>
+                      )}
                     </div>
 
-                    <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-                      <div className="text-right hidden sm:block">
-                        <p className="text-xs font-semibold text-text">GHS {product.price.toLocaleString()}</p>
-                        <p className="text-[10px] text-text-muted flex items-center gap-1 justify-end">
-                          <Clock className="w-3 h-3" />
-                          {product.createdAt ? new Date(product.createdAt).toLocaleDateString() : ''}
-                        </p>
+                    {product.rating > 0 && (
+                      <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className={`w-3 h-3 ${i < Math.round(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
+                          ))}
+                        </div>
+                        <span className="text-[10px] text-text-muted font-medium">({product.reviewCount})</span>
                       </div>
+                    )}
 
-                      <div className="flex flex-col items-center gap-0.5 min-w-[70px]">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap border ${
-                          isOutOfStock
-                            ? 'bg-error/10 text-error border-error/20'
-                            : isLowStock
-                              ? 'bg-warning/10 text-warning border-warning/20'
-                              : 'bg-success/10 text-success border-success/20'
-                        }`}>
-                          <Package className="w-3 h-3" />
-                          {product.stockQuantity}
-                        </span>
-                        <span className={`text-[8px] font-bold tracking-wider uppercase ${
-                          isOutOfStock ? 'text-error' : isLowStock ? 'text-warning' : 'text-success'
-                        }`}>
-                          {product.stockStatus}
-                        </span>
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-lg font-black text-text">GHS {product.price.toLocaleString()}</span>
+                        {product.oldPrice && (
+                          <span className="text-[10px] text-text-muted line-through">GHS {product.oldPrice.toLocaleString()}</span>
+                        )}
                       </div>
-
-                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-1">
-                        <button onClick={() => setEditingProduct(product)} className="p-1.5 rounded-lg hover:bg-primary/10 text-text-muted hover:text-primary transition-all duration-200" title="Edit">
-                          <Edit3 className="w-3.5 h-3.5" />
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => setEditingProduct(product)}
+                          className="p-2 rounded-xl transition-all duration-200 bg-primary/10 text-primary hover:bg-primary hover:text-white active:scale-95"
+                          title="View / Edit"
+                        >
+                          <Info className="w-4 h-4" />
                         </button>
-                        <button onClick={() => setDeleteTarget(product)} className="p-1.5 rounded-lg hover:bg-error/10 text-text-muted hover:text-error transition-all duration-200" title="Delete">
-                          <Trash2 className="w-3.5 h-3.5" />
+                        <button
+                          onClick={() => setDeleteTarget(product)}
+                          className="p-2 rounded-xl transition-all duration-200 bg-error/10 text-error hover:bg-error hover:text-white active:scale-95"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -398,29 +385,42 @@ export default function InventoryPage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-3 border-t border-outlineVariant/20 bg-background/50">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-6 py-3 border-t border-outlineVariant/20 bg-background/50 gap-3">
+          <div className="flex items-center gap-3">
             <p className="text-[10px] text-text-muted">
-              Page {page} of {totalPages} &middot; Total stock items tracked
+              Page {page} of {totalPages} &middot; {totalItems} total products
             </p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setPage(Math.max(1, page - 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 text-xs rounded-lg border border-outlineVariant/60 bg-white hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+            <div className="flex items-center gap-1.5">
+              <List className="w-3 h-3 text-text-muted" />
+              <select
+                value={pageSize}
+                onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1) }}
+                className="appearance-none pl-2 pr-6 py-1 text-[10px] bg-white border border-outlineVariant/60 rounded-lg outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary cursor-pointer"
               >
-                Previous
-              </button>
-              <button
-                onClick={() => setPage(Math.min(totalPages, page + 1))}
-                disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs rounded-lg border border-outlineVariant/60 bg-white hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
-              >
-                Next
-              </button>
+                <option value={10}>10 / page</option>
+                <option value={20}>20 / page</option>
+                <option value={50}>50 / page</option>
+                <option value={100}>100 / page</option>
+              </select>
             </div>
           </div>
-        )}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 text-xs rounded-lg border border-outlineVariant/60 bg-white hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages}
+              className="px-3 py-1.5 text-xs rounded-lg border border-outlineVariant/60 bg-white hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
 
       <AddProductModal open={showAddProduct} onClose={() => setShowAddProduct(false)} onSuccess={fetchProducts} />

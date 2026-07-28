@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone, ChevronRight, PlayCircle, Shield, Truck, Star, ShoppingBag, ArrowUpRight, Heart, CheckCircle, Users } from 'lucide-react'
-import firstImg from '@/images/first.jpg'
 import appleImg from '@/images/Apple.jpg'
+import s25UltraVideo from '@/images/Samsung Galaxy S25 Ultra - Samsung Latinoamérica y Caribe (1080p, h264, youtube).mp4'
+import technovaVideo from '@/images/Technova.mp4'
+import qledVideo from '@/images/2019 QLED 8K TV OFFICIAL INTRODUCTION-GHANA - Samsung Ghana (720p, h264, youtube).mp4'
+import dellVideo from '@/images/Dell G15 Laptop  Dell G15 Gaming Laptop  Dell G15 Official Video Trailer  Dell G15 Laptop Review - 999 Gadgets (1080p, h264, youtube).mp4'
 
 export default function LandingPage() {
   const [hasLikedStore, setHasLikedStore] = useState(() => {
@@ -124,11 +127,15 @@ export default function LandingPage() {
 
             <div className="relative mt-8 md:mt-0 group justify-self-center max-w-md w-full">
               <div className="aspect-square bg-white rounded-3xl overflow-hidden border border-outlineVariant/60 relative transition-all duration-500 shadow-xl group-hover:shadow-2xl group-hover:shadow-primary/10">
-                <img
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src={firstImg}
-                  alt="Premium smartphone showcase"
-                />
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-100"
+                >
+                  <source src={technovaVideo} type="video/mp4" />
+                </video>
                 <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent transition-opacity duration-500 group-hover:opacity-40" />
               </div>
 
@@ -191,11 +198,15 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="mt-6 relative overflow-hidden rounded-2xl border border-outlineVariant/60 h-44">
-                  <img
-                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                    src={appleImg}
-                    alt="Secure checkout visualization"
-                  />
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                  >
+                    <source src={dellVideo} type="video/mp4" />
+                  </video>
                   <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
               </div>
@@ -256,10 +267,10 @@ export default function LandingPage() {
         </section>
 
         {/* Why TechNova */}
-        <section className="py-20 bg-primary text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-secondary/20" />
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/40 rounded-full blur-3xl" />
+        <section className="py-20 bg-primary text-white relative overflow-hidden mb-16">
+          <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+            <source src={s25UltraVideo} type="video/mp4" />
+          </video>
 
           <div className="max-w-7xl mx-auto px-6 relative">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -331,9 +342,12 @@ export default function LandingPage() {
 
         {/* CTA Section */}
         <section className="py-20 bg-background relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] via-transparent to-secondary/[0.02]" />
+          <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+            <source src={qledVideo} type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
           <div className="max-w-4xl mx-auto px-6 text-center relative">
-            <div className="bg-white/80 backdrop-blur-xl p-10 md:p-14 rounded-[2rem] border border-outlineVariant/60 relative overflow-hidden hover:shadow-2xl transition-all duration-500 group">
+            <div className="bg-transparent mt-8 p-10 md:p-14 rounded-[2rem] border border-white/10 relative overflow-hidden hover:shadow-2xl transition-all duration-500 group">
               <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-primary/[0.04] rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
               <div className="absolute -top-16 -right-16 w-56 h-56 bg-secondary/[0.04] rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
 
@@ -341,9 +355,7 @@ export default function LandingPage() {
                 <div className="inline-flex items-center justify-center w-14 h-14 bg-primary/5 rounded-2xl mb-6 border border-primary/15">
                   <ShoppingBag className="w-6 h-6 text-primary" />
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black text-text mb-4 font-heading leading-tight tracking-tight">
-                  Ready to upgrade your mobile experience?
-                </h2>
+
                 <p className="text-text-secondary text-xs mb-8 max-w-xl mx-auto leading-relaxed font-semibold">
                   Join thousands of customers who trust TechNova for premium smartphones and accessories. Free shipping is automatically initialized on orders over $99.
                 </p>

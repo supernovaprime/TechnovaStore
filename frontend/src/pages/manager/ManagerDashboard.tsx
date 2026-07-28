@@ -79,7 +79,7 @@ function ManagerDashboard() {
         fetch('/api/v1/orders?limit=1', {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch('/api/v1/products?limit=100', {
+        fetch('/api/v1/products?limit=10000', {
           headers: { Authorization: `Bearer ${token}` }
         })
       ])
