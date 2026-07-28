@@ -48,7 +48,7 @@ export default function AddProductModal({ open, onClose, onSuccess, product }: A
   const [categories, setCategories] = useState<Category[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [_imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [imageUploading, setImageUploading] = useState(false)

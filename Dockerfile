@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 
 COPY . .
 RUN npm run build

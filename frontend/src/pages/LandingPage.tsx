@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone, ChevronRight, PlayCircle, Shield, Truck, Star, ShoppingBag, ArrowUpRight, Heart, CheckCircle, Users } from 'lucide-react'
-import appleImg from '@/images/Apple.jpg'
 import s25UltraVideo from '@/images/Samsung Galaxy S25 Ultra - Samsung Latinoamérica y Caribe (1080p, h264, youtube).mp4'
 import technovaVideo from '@/images/Technova.mp4'
 import qledVideo from '@/images/2019 QLED 8K TV OFFICIAL INTRODUCTION-GHANA - Samsung Ghana (720p, h264, youtube).mp4'
